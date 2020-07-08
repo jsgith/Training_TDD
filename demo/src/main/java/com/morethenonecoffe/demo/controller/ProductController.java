@@ -23,6 +23,18 @@ public class ProductController {
 
     @RequestMapping("/")
     public String viewHomePage(Model model) {
+        return "index";
+    }
+    @RequestMapping("/user")
+    public String viewHomePageUser(Model model) {
+        List<Product> listProducts = service.listAll();
+        model.addAttribute("listProducts", listProducts);
+
+        return "index";
+    }
+
+    @RequestMapping("/admin")
+    public String viewHomePageAdmin(Model model) {
         List<Product> listProducts = service.listAll();
         model.addAttribute("listProducts", listProducts);
 
