@@ -1,31 +1,14 @@
 package com.morethenonecoffe.demo.service;
 
 import com.morethenonecoffe.demo.entity.Product;
-import com.morethenonecoffe.demo.repository.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
-public class ProductService {
+public interface ProductService {
 
-    @Autowired
-    private ProductRepository productRepository;
+    List<Product> listAll();
+    void save(Product product);
+    Product get(Long id);
+    void delete(Long id);
 
-    public List<Product> listAll() {
-        return productRepository.findAll();
-    }
-
-    public void save(Product product) {
-        productRepository.save(product);
-    }
-
-    public Product get(Long id) {
-        return productRepository.findById(id).get();
-    }
-
-    public void delete(Long id) {
-        productRepository.deleteById(id);
-    }
 }

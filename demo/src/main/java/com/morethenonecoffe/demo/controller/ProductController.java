@@ -1,7 +1,7 @@
 package com.morethenonecoffe.demo.controller;
 
 import com.morethenonecoffe.demo.entity.Product;
-import com.morethenonecoffe.demo.service.ProductService;
+import com.morethenonecoffe.demo.service.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +19,7 @@ import java.util.List;
 public class ProductController {
 
     @Autowired
-    private ProductService service;
+    private ProductServiceImpl service;
 
     @RequestMapping("/")
     public String viewHomePage(Model model) {
