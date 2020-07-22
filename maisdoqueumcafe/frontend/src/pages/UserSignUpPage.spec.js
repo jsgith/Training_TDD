@@ -77,8 +77,8 @@ describe('UserSignUpPage', () => {
 
             fireEvent.change(displayNameInput, changeEvent('my-display-name'));
             fireEvent.change(usernameInput, changeEvent('my-user-name'));
-            fireEvent.change(passwordInput, changeEvent('my-password'));
-            fireEvent.change(passwordRepeatInput, changeEvent('my-password'));
+            fireEvent.change(passwordInput, changeEvent('P4ssword'));
+            fireEvent.change(passwordRepeatInput, changeEvent('P4ssword'));
 
             button = container.querySelector('button');
             return rendered;
@@ -106,9 +106,9 @@ describe('UserSignUpPage', () => {
             const { queryByPlaceholderText } = render(<UserSignupPage />);
             const passwordInput = queryByPlaceholderText('Your password');
 
-            fireEvent.change(passwordInput, changeEvent('my-password'));
+            fireEvent.change(passwordInput, changeEvent('P4ssword'));
 
-            expect(passwordInput).toHaveValue('my-password');
+            expect(passwordInput).toHaveValue('P4ssword');
         });
 
         it('sets the password repeat value into state', () => {
@@ -134,6 +134,22 @@ describe('UserSignUpPage', () => {
         it('It does not throw exception when clicking the button when actions not provided in props', () => { // We will pretend we are sending an http call to the back end (mocking)
             const { container, queryByPlaceholderText } = setupForSubmit();
             expect(() => fireEvent.click(button)).not.toThrow(); 
+        });
+
+        it('calls post with user body when the fields are valid', () => { // We will pretend we are sending an http call to the back end (mocking)
+            const actions = {
+                postSignup: jest.fn().mockResolvedValueOnce({}) // mock function. In javascript asynchronous are handle with promise function. Here we should mock a promise function
+            };
+            
+            setupForSubmit({ actions });
+
+            const expectedUserObject = {
+                username: 'my-user-name',
+                displayName: 'my-display-name',
+                password: 'P4ssword'
+            }
+            fireEvent.click(button);
+            expect(actions.postSignup).toHaveBeenCalledWith(expectedUserObject);
         });
     });
 });
