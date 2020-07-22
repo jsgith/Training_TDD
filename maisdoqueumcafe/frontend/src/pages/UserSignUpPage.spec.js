@@ -60,6 +60,30 @@ describe('UserSignUpPage', () => {
             }
         };
 
+        let button, displayNameInput, usernameInput, passwordInput, passwordRepeatInput;
+
+        const setupForSubmit = (props) => {
+
+            const rendered = render(
+                <UserSignupPage {...props}/>
+            );
+
+            const { container, queryByPlaceholderText } = rendered;
+
+            usernameInput = queryByPlaceholderText('Your username');
+            passwordInput = queryByPlaceholderText('Your password');
+            displayNameInput = queryByPlaceholderText('Your display name');
+            passwordRepeatInput = queryByPlaceholderText('Repeat your password');
+
+            fireEvent.change(displayNameInput, changeEvent('my-display-name'));
+            fireEvent.change(usernameInput, changeEvent('my-user-name'));
+            fireEvent.change(passwordInput, changeEvent('my-password'));
+            fireEvent.change(passwordRepeatInput, changeEvent('my-password'));
+
+            button = container.querySelector('button');
+            return rendered;
+        }
+
         it('sets the displayName value into state', () => {
             const { queryByPlaceholderText } = render(<UserSignupPage />);
             const displayNameInput = queryByPlaceholderText('Your display name');
@@ -100,41 +124,15 @@ describe('UserSignUpPage', () => {
             const actions = {
                 postSignup: jest.fn().mockResolvedValueOnce({}) // mock function. In javascript asynchronous are handle with promise function. Here we should mock a promise function
             };
-            const { container, queryByPlaceholderText } = render(
-                <UserSignupPage actions={actions}/>
-            );
+            
+            setupForSubmit({ actions });
 
-            const displayNameInput = queryByPlaceholderText('Your display name');
-            const usernameInput = queryByPlaceholderText('Your username');
-            const passwordInput = queryByPlaceholderText('Your password');
-            const passwordRepeatInput = queryByPlaceholderText('Repeat your password');
-
-            fireEvent.change(displayNameInput, changeEvent('my-display-name'));
-            fireEvent.change(usernameInput, changeEvent('my-user-name'));
-            fireEvent.change(passwordInput, changeEvent('my-password'));
-            fireEvent.change(passwordRepeatInput, changeEvent('my-password'));
-
-            const button = container.querySelector('button');
             fireEvent.click(button);
             expect(actions.postSignup).toHaveBeenCalledTimes(1); // we expect our mock function to be called
         });
 
         it('It does not throw exception when clicking the button when actions not provided in props', () => { // We will pretend we are sending an http call to the back end (mocking)
-            const { container, queryByPlaceholderText } = render(
-                <UserSignupPage/>
-            );
-
-            const displayNameInput = queryByPlaceholderText('Your display name');
-            const usernameInput = queryByPlaceholderText('Your username');
-            const passwordInput = queryByPlaceholderText('Your password');
-            const passwordRepeatInput = queryByPlaceholderText('Repeat your password');
-
-            fireEvent.change(displayNameInput, changeEvent('my-display-name'));
-            fireEvent.change(usernameInput, changeEvent('my-user-name'));
-            fireEvent.change(passwordInput, changeEvent('my-password'));
-            fireEvent.change(passwordRepeatInput, changeEvent('my-password'));
-
-            const button = container.querySelector('button');
+            const { container, queryByPlaceholderText } = setupForSubmit();
             expect(() => fireEvent.click(button)).not.toThrow(); 
         });
     });
