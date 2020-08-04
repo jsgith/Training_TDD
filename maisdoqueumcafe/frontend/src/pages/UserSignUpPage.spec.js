@@ -1,5 +1,5 @@
 import React from 'react';
-import { render , cleanup, fireEvent } from '@testing-library/react';
+import { render , cleanup, fireEvent, waitForDomChange } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { UserSignupPage } from './UserSignupPage';
 
@@ -66,8 +66,8 @@ describe('UserSignUpPage', () => {
                     setTimeout(() => {
                         resolve({});
                     }, 300)
-                })
-            })
+                });
+            });
         }
 
         let button, displayNameInput, usernameInput, passwordInput, passwordRepeatInput;
@@ -184,5 +184,41 @@ describe('UserSignUpPage', () => {
             const spinner = queryByText('Loading...');
             expect(spinner).toBeInTheDocument();
         });
+
+        it('hides the spinner after api call finishes successfully', async () => { // We have to wait for our delayed mock function to complete 300 ms
+            const actions = {
+                postSignup: mockAsyncDelayed()
+            };
+            const { queryByText } = setupForSubmit({ actions });
+            fireEvent.click(button);
+
+            await waitForDomChange();
+
+            const spinner = queryByText('Loading...');
+            expect(spinner).not.toBeInTheDocument();
+        });
+
+        it('hides the spinner after api call finishes with an error', async () => { // We have to wait for our delayed mock function to complete 300 ms
+            const actions = {
+                postSignup: jest.fn().mockImplementation(() => {
+                    return new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                            reject({
+                                response: {data: {}}
+                            });
+                        }, 300);
+                    });
+                })
+            };
+            const { queryByText } = setupForSubmit({ actions });
+            fireEvent.click(button);
+
+            await waitForDomChange();
+
+            const spinner = queryByText('Loading...');
+            expect(spinner).not.toBeInTheDocument();
+        });
     });
 });
+
+console.error = () => {};
