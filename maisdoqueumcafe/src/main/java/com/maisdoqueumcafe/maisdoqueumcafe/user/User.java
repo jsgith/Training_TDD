@@ -17,7 +17,7 @@ public class User {
     @GeneratedValue // Tell JPA how this Id will be generated. The default one is AUTO. Creates unic Ids for us
     private long id;
 
-    @NotNull
+    @NotNull(message = "{maisdoqueumcafe.validation.constraints.NotNull.message}")
     @Size(min = 4, max=255)
     private String username;
 
@@ -27,6 +27,6 @@ public class User {
 
     @NotNull
     @Size(min = 8, max=255)
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$" , message = "{maisdoqueumcafe.constraints.Pattern.message}")
     private String password;
 }
