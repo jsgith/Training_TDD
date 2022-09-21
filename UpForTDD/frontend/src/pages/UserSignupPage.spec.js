@@ -1,5 +1,10 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react'; // FireEvent to simulate user input function
+import { 
+    render, 
+    fireEvent,
+    waitFor,
+    waitForElementToBeRemoved
+} from '@testing-library/react'; // FireEvent to simulate user input function
 import '@testing-library/jest-dom/extend-expect';
 import { UserSignupPage } from './UserSignupPage';
 
@@ -84,6 +89,16 @@ describe('UserSignupPage', () => {  //First Arg: Description, Second Arg: Functi
             return rendered;
         }
 
+        const mockAsyncDelayed = () => {
+            return jest.fn().mockImplementation(() => {
+                return new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        resolve({});
+                    }, 300)
+                });
+            });
+        }
+
         it('sets the displayName value into state', () => {
             const { queryByPlaceholderText } = render(<UserSignupPage/>);
             const displayNameInput = queryByPlaceholderText('Your display name');
@@ -144,6 +159,63 @@ describe('UserSignupPage', () => {  //First Arg: Description, Second Arg: Functi
                 password: 'my-password',
             }
             expect(actions.postSignup).toHaveBeenCalledWith(expectedUserObject);
+        });
+
+        it('does not allow user to click the Sign up button when there is an ongoing api call', () => {
+            const actions = {
+                postSignup: mockAsyncDelayed()
+            }
+            setupForSubmit({actions});
+
+            fireEvent.click(button);
+            fireEvent.click(button);
+            
+            expect(actions.postSignup).toHaveBeenCalledTimes(1);
+        });
+
+        it('displays a spinner when there is an ongoing api call', () => {
+            const actions = {
+                postSignup: mockAsyncDelayed()
+            };
+            const {queryByText} = setupForSubmit({ actions });
+            fireEvent.click(button);
+
+            const spinner = queryByText('Loading...');
+            expect(spinner).toBeInTheDocument();
+        });
+
+        it('hides spinner after api call finishes successfully', async () => {
+            const actions = {
+                postSignup: mockAsyncDelayed()
+            };
+            const {queryByText} = setupForSubmit({ actions });
+            fireEvent.click(button);
+
+            const spinner = queryByText('Loading...'); 
+            await waitForElementToBeRemoved(spinner);
+
+            expect(spinner).not.toBeInTheDocument();
+        });
+
+        it('hides spinner after api call finishes with error', async () => {
+            const actions = {
+                postSignup: jest.fn().mockImplementation(() => {
+                    return new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                            reject({
+                                response: { data: {} }
+                            });
+                        }, 300)
+                    });
+                })
+            };
+            const {queryByText} = setupForSubmit({ actions });
+            fireEvent.click(button);
+
+            const spinner = queryByText('Loading...'); 
+            await waitForElementToBeRemoved(spinner);
+
+            expect(spinner).not.toBeInTheDocument();
         });
     });
 });
