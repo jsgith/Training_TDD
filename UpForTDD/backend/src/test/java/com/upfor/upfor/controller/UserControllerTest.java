@@ -23,7 +23,7 @@ import com.upfor.upfor.user.UserRepository;
 public class UserControllerTest {
 
 
-    private static final String API_1_0_USERS= "/api/1.0/users";
+    private static final String API_1_0_USERS= "/api/1.0/users"; 
 
     @Autowired
     TestRestTemplate testRestTemplate;
@@ -44,8 +44,7 @@ public class UserControllerTest {
     public void postUser_whenUserIsValid_receiveOk() {
 
         User user = createValidUser();
-        ResponseEntity<Object> response = 
-        testRestTemplate.postForEntity("/api/1.0/users", user, Object.class);
+        ResponseEntity<Object> response = postSignup(user, Object.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     } 
@@ -57,17 +56,15 @@ public class UserControllerTest {
     public void postUser_whenUserIsValid_userSavedToDatabase() {
     
         User user = createValidUser();
-        testRestTemplate.postForEntity(API_1_0_USERS, user, Object.class);
-        assertThat(1).isEqualTo(1);
+        postSignup(user, Object.class);
+        assertThat(userRepository.count()).isEqualTo(1);
     }
 
     @Test
     public void postUser_whenUserIsValid_receiveSuccessMessage() {
 
         User user = createValidUser();
-        ResponseEntity<GenericResponse> response = 
-        testRestTemplate.postForEntity("/api/1.0/users", user, GenericResponse.class);
-
+        ResponseEntity<GenericResponse> response = postSignup(user, GenericResponse.class);
         assertThat(response.getBody().getMessage()).isNotNull();
     }
     
@@ -75,10 +72,14 @@ public class UserControllerTest {
     public void postUser_whenUserIsValid_passwordIsHashedInDatabase() {
 
         User user = createValidUser();
-        testRestTemplate.postForEntity(API_1_0_USERS, user, Object.class);
+        postSignup(user, Object.class);
         List<User> users = userRepository.findAll();
         User inDB = users.get(0);
         assertThat(inDB.getPassword()).isNotEqualTo(user.getPassword());
+    }
+
+    public <T> ResponseEntity<T> postSignup(Object request, Class<T> response) {
+        return testRestTemplate.postForEntity(API_1_0_USERS, request, response);
     }
 
     private User createValidUser() {
