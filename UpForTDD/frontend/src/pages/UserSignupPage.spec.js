@@ -217,5 +217,24 @@ describe('UserSignupPage', () => {  //First Arg: Description, Second Arg: Functi
 
             expect(spinner).not.toBeInTheDocument();
         });
+
+        it('displays validation error for displayName when error is received for the field', async () => {
+            const actions = {
+                postSignup: jest.fn().mockRejectedValue({
+                    response: {
+                        data: {
+                            validationErrors: {
+                                displayName: 'Cannot be null'
+                            }
+                        }
+                    }
+                })
+            }
+            const { getByText } = setupForSubmit({actions});
+            fireEvent.click(button);
+
+            const errorMessage = await waitFor(() => getByText('Cannot be null'))
+            expect(errorMessage).toHaveTextContent('Cannot be null');
+        })
     });
 });
