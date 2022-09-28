@@ -8,6 +8,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import com.upfor.upfor.annotations.UniqueUsername;
+
 import lombok.Data;
 
 @Data  //Create constructor getters and setters, equals and hashcode
@@ -20,8 +22,9 @@ public class User {
     @GeneratedValue
     private long id;
 
-    @NotNull
+    @NotNull(message = "{upfor.constraints.username.NotNull.message}")
     @Size(min = 4, max = 255)
+    @UniqueUsername
     private String username;
 
     @NotNull
@@ -30,7 +33,7 @@ public class User {
 
     @NotNull
     @Size(min = 8, max = 255)
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$", message= "{upfor.constraints.password.Pattern.message}")
     private String password;
     
 }
