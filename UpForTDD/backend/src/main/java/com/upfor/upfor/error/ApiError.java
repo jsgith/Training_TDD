@@ -25,5 +25,5 @@ public class ApiError {
 
     private String url;
 
-    private Map<String, String> validationErros;
+    private Map<String, String> validationErrors;
 }

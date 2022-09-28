@@ -45,7 +45,7 @@ public class UserController {
             validationErrors.put(fieldError.getField(), fieldError.getDefaultMessage());
         }
 
-        apiError.setValidationErros(validationErrors);
+        apiError.setValidationErrors(validationErrors);
 
         return apiError;
     }

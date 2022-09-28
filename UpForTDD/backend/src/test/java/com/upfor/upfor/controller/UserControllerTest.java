@@ -192,7 +192,7 @@ public class UserControllerTest {
     public void postUser_whenUserIsInvalid_receiveApiErrorWithValidationErrors() {
         User user = new User();
         ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
-        assertThat(response.getBody().getValidationErros().size()).isEqualTo(3); 
+        assertThat(response.getBody().getValidationErrors().size()).isEqualTo(3); 
     }
 
     @Test
@@ -200,7 +200,7 @@ public class UserControllerTest {
         User user = createValidUser();
         user.setUsername(null);
         ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
-        Map<String, String> validationErrors = response.getBody().getValidationErros();
+        Map<String, String> validationErrors = response.getBody().getValidationErrors();
         assertThat(validationErrors.get("username")).isEqualTo("Username cannot be null");
     }
 
@@ -209,7 +209,7 @@ public class UserControllerTest {
         User user = createValidUser();
         user.setPassword(null);
         ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
-        Map<String, String> validationErrors = response.getBody().getValidationErros();
+        Map<String, String> validationErrors = response.getBody().getValidationErrors();
         assertThat(validationErrors.get("password")).isEqualTo("Cannot be null");
     }
 
@@ -218,7 +218,7 @@ public class UserControllerTest {
         User user = createValidUser();
         user.setUsername("abc");
         ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
-        Map<String, String> validationErrors = response.getBody().getValidationErros();
+        Map<String, String> validationErrors = response.getBody().getValidationErrors();
         assertThat(validationErrors.get("username")).isEqualTo("It must have minimum 4 and maximum 255 characters");
     }
 
@@ -227,7 +227,7 @@ public class UserControllerTest {
         User user = createValidUser();
         user.setPassword("allowercase");
         ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
-        Map<String, String> validationErrors = response.getBody().getValidationErros();
+        Map<String, String> validationErrors = response.getBody().getValidationErrors();
         assertThat(validationErrors.get("password")).isEqualTo("Password must have at least one uppercase, one lowercase letter and one number");
     }
 
@@ -246,7 +246,7 @@ public class UserControllerTest {
         
         User user = createValidUser();
         ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
-        Map<String, String> validationErrors = response.getBody().getValidationErros();
+        Map<String, String> validationErrors = response.getBody().getValidationErrors();
         
         assertThat(validationErrors.get("username")).isEqualTo("This name is in use");
     }
