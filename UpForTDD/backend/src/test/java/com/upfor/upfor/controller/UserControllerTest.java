@@ -22,7 +22,7 @@ import com.upfor.upfor.shared.GenericResponse;
 import com.upfor.upfor.user.User;
 import com.upfor.upfor.user.UserRepository;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT) //Integration Tests
 @ActiveProfiles("test")
 public class UserControllerTest {
 
@@ -229,6 +229,26 @@ public class UserControllerTest {
         ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
         Map<String, String> validationErrors = response.getBody().getValidationErros();
         assertThat(validationErrors.get("password")).isEqualTo("Password must have at least one uppercase, one lowercase letter and one number");
+    }
+
+    @Test 
+    public void postUser_whenAnotherUserHasSameUsername_receiveBadRequest() { //When need to deactivate validation at hibernate persistence layer in the application.yml file
+        userRepository.save(createValidUser());
+        
+        User user = createValidUser();
+        ResponseEntity<Object> response = postSignup(user, Object.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test 
+    public void postUser_whenAnotherUserHasSameUsername_receiveMessageOfDuplicateUsername() { //When need to deactivate validation at hibernate persistence layer in the application.yml file
+        userRepository.save(createValidUser());
+        
+        User user = createValidUser();
+        ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
+        Map<String, String> validationErrors = response.getBody().getValidationErros();
+        
+        assertThat(validationErrors.get("username")).isEqualTo("This name is in use");
     }
 
     public <T> ResponseEntity<T> postSignup(Object request, Class<T> response) {
