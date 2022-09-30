@@ -38,5 +38,5 @@
   "devDependencies": {
     "@testing-library/react": "^13.3.0"
   },
-  "proxy": "http://localhost:8080"
+  "proxy": "http://localhost:8080/"
 }
