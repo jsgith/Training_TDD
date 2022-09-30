@@ -5,7 +5,6 @@ import {
     waitFor,
     waitForElementToBeRemoved
 } from '@testing-library/react'; // FireEvent to simulate user input function
-import '@testing-library/jest-dom/extend-expect';
 import { UserSignupPage } from './UserSignupPage';
 
 describe('UserSignupPage', () => {  //First Arg: Description, Second Arg: Function which will include the test function in it
@@ -233,8 +232,9 @@ describe('UserSignupPage', () => {  //First Arg: Description, Second Arg: Functi
             const { getByText } = setupForSubmit({actions});
             fireEvent.click(button);
 
-            const errorMessage = await waitFor(() => getByText('Cannot be null'))
-            expect(errorMessage).toHaveTextContent('Cannot be null');
+            await waitFor(() => {
+                expect(getByText('Cannot be null')).toBeInTheDocument();
+            })
         })
     });
 });
